@@ -28,7 +28,7 @@ namespace Round.NET.SmartTerminals.Models.Translation
 			{
 				Translation.FlushedTokenThread = new Thread(delegate()
 				{
-					for (;;)
+					while(Core.Core.IsRunning)
 					{
 						Thread.Sleep(60000);
 						Translation.Token = Translation.GetAPIToken();
