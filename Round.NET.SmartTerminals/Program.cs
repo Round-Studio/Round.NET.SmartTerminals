@@ -1,4 +1,7 @@
-﻿using Round.NET.SmartTerminals.Models.Translation;
+﻿using Round.NET.SmartTerminals.Models.Core;
+using Round.NET.SmartTerminals.Models.Core.Terminals.MenuSystem;
+using Round.NET.SmartTerminals.Models.Explorer;
+using Round.NET.SmartTerminals.Models.Translation;
 
 namespace Round.NET.SmartTerminals
 {
@@ -6,7 +9,8 @@ namespace Round.NET.SmartTerminals
     {
         static void Main(string[] args)
         {
-            Models.Core.Core.InitializerTerminals();
+            Core.InitializerTerminals();
+            Explorer.ExplorerCore();
         }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,71 +13,101 @@ namespace Round.NET.SmartTerminals.Models.Core.Terminals.Command
     {
         public static void RunCode(string Code, string time)
         {
-            ProcessStartInfo psi = new ProcessStartInfo("cmd.exe", "/c " + Code);
-            psi.RedirectStandardOutput = true;
-            psi.RedirectStandardError = true;
-            psi.RedirectStandardInput = true;
-            psi.UseShellExecute = false;
-            psi.CreateNoWindow = true;
-            Console.SetCursorPosition(0, Console.CursorTop - 1);
-
-            var temp = "";
-            var iserr = false;
-            var isruns = false;
-            using (Process process = Process.Start(psi))
+            if(BuiltCommand.KeywordProcessing(Code)) { BuiltCommand.RunKeywordCode(Code); }
+            else
             {
-                if (process != null)
+                ProcessStartInfo psi = new ProcessStartInfo("cmd.exe", "/c " + Code);
+                psi.RedirectStandardOutput = true;
+                psi.RedirectStandardError = true;
+                psi.RedirectStandardInput = true;
+                psi.UseShellExecute = false;
+                psi.CreateNoWindow = true;
+                Console.SetCursorPosition(0, Console.CursorTop - 2);
+                ColorPrint.Print($"┌", ConsoleColor.DarkCyan);
+#if DEBUG
+                ColorPrint.Print($" [{time}] ", ConsoleColor.Magenta);
+                ColorPrint.Print("[DEBUG] ", ConsoleColor.Red);
+#else
+                ColorPrint.Println($" [{time}] ",ConsoleColor.Magenta);
+#endif
+                ColorPrint.Println(Code, ConsoleColor.Green);
+
+                var temp = "";
+                var iserr = false;
+                var isruns = false;
+                using (Process process = Process.Start(psi))
                 {
-                    process.OutputDataReceived += (sender, e) =>
+                    if (process != null)
                     {
-                        if (!String.IsNullOrEmpty(e.Data))
+                        process.OutputDataReceived += (sender, e) =>
                         {
-                            ColorPrint.Print($"│ ", ConsoleColor.DarkCyan);
-                            ColorPrint.Println($"{e.Data}");
-                            temp = e.Data;
-                            iserr = false;
-                            isruns = true;
-                        }
-                    };
+                            if (!String.IsNullOrEmpty(e.Data))
+                            {
+                                ColorPrint.Print($"│ ", ConsoleColor.DarkCyan);
+                                var res = Translation.Translation.MsTranslationCore(e.Data);
+                                if (res != null)
+                                {
+                                    ColorPrint.Println($"{res}");
+                                    temp = res;
+                                }
+                                else
+                                {
+                                    ColorPrint.Println($"{e.Data}");
+                                    temp = e.Data;
+                                }
+                                iserr = false;
+                                isruns = true;
+                            }
+                        };
 
-                    process.ErrorDataReceived += (sender, e) =>
-                    {
-                        if (!String.IsNullOrEmpty(e.Data))
+                        process.ErrorDataReceived += (sender, e) =>
                         {
-                            ColorPrint.Print($"│ ", ConsoleColor.DarkCyan);
-                            ColorPrint.Println($"{e.Data}", ConsoleColor.Red);
-                            temp = e.Data;
-                            iserr = true;
-                            isruns = true;
-                        }
-                    };
+                            if (!String.IsNullOrEmpty(e.Data))
+                            {
+                                ColorPrint.Print($"│ ", ConsoleColor.DarkCyan);
+                                var res = Translation.Translation.MsTranslationCore(e.Data);
+                                if (res != null)
+                                {
+                                    ColorPrint.Println($"{res}",ConsoleColor.Red);
+                                    temp = res;
+                                }
+                                else
+                                {
+                                    ColorPrint.Println($"{e.Data}", ConsoleColor.Red);
+                                    temp = e.Data;
+                                }
+                                iserr = true;
+                                isruns = true;
+                            }
+                        };
 
-                    process.BeginOutputReadLine();
-                    process.BeginErrorReadLine();
+                        process.BeginOutputReadLine();
+                        process.BeginErrorReadLine();
 
-                    process.WaitForExit();
+                        process.WaitForExit();
+                    }
                 }
-            }
 
-            if (isruns)
-            {
-                Console.SetCursorPosition(0, Console.CursorTop - 1);
-                ColorPrint.Print($"└", ConsoleColor.DarkCyan);
-                if (!iserr)
+                if (isruns)
                 {
-                    ColorPrint.Println($" {temp}");
+                    Console.SetCursorPosition(0, Console.CursorTop - 1);
+                    ColorPrint.Print($"└", ConsoleColor.DarkCyan);
+                    if (!iserr)
+                    {
+                        ColorPrint.Println($" {temp}");
+                    }
+                    else
+                    {
+                        ColorPrint.Println($" {temp}", ConsoleColor.Red);
+                    }
                 }
                 else
                 {
-                    ColorPrint.Println($" {temp}", ConsoleColor.Red);
-                }
-            }
-            else
-            {
-                Console.SetCursorPosition(0, Console.CursorTop - 1);
+                    Console.SetCursorPosition(0, Console.CursorTop - 1);
 
-                ColorPrint.Print($"·", ConsoleColor.Red);
-                ColorPrint.Println($" [{time}] ", ConsoleColor.Magenta);
+                    ColorPrint.Print($"×", ConsoleColor.Red);
+                    ColorPrint.Println($" [{time}] ", ConsoleColor.Magenta);
+                }
             }
         }
     }
