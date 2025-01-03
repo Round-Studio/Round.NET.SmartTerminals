@@ -9,12 +9,14 @@ using Newtonsoft.Json.Linq;
 namespace Round.NET.SmartTerminals.Models.Translation
 {
 	internal class Translation
-	{
-		public static void InitTranslationCore()
+    {
+        public static string Token;
+        private static Thread FlushedTokenThread;
+        public static void InitTranslationCore()
 		{
 			Translation.Token = Translation.GetAPIToken();
-			bool flag = Translation.FlushedTokenThread != null;
-			if (flag)
+
+			if (Translation.FlushedTokenThread != null)
 			{
 				try
 				{
@@ -29,10 +31,11 @@ namespace Round.NET.SmartTerminals.Models.Translation
 				Translation.FlushedTokenThread = new Thread(delegate()
 				{
 					while(Core.Core.IsRunning)
-					{
-						Thread.Sleep(60000);
-						Translation.Token = Translation.GetAPIToken();
-					}
+                    {
+						Console.WriteLine(Translation.Token);
+                        Thread.Sleep(60000);
+                        Translation.Token = Translation.GetAPIToken();
+                    }
 				});
 			}
 		}
@@ -46,13 +49,13 @@ namespace Round.NET.SmartTerminals.Models.Translation
 					client.DefaultRequestHeaders.Accept.ParseAdd("*/*");
 					client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
 					client.DefaultRequestHeaders.ConnectionClose = new bool?(false);
-					client.DefaultRequestHeaders.UserAgent.ParseAdd("RoundSmartTerminals/ver1 (https://round-studio.github.io)");
+					client.DefaultRequestHeaders.UserAgent.ParseAdd("RoundSmartTerminals/ver2 (https://round-studio.github.io)");
 					HttpResponseMessage response = client.GetAsync("https://edge.microsoft.com/translate/auth").Result;
 					response.EnsureSuccessStatusCode();
 					string responseBody = response.Content.ReadAsStringAsync().Result;
 					result = responseBody;
 				}
-				catch (HttpRequestException e)
+				catch
 				{
 					result = null;
 				}
@@ -90,34 +93,32 @@ namespace Round.NET.SmartTerminals.Models.Translation
 			return null;
 		}
 
-		public static string TranslationCore(string Message)
+		public static string MsTranslationCore(string Message)
 		{
 			string result;
 			try
 			{
-				HttpClient client = new HttpClient();
-				client.Timeout = TimeSpan.FromMilliseconds(-1.0);
-				client.BaseAddress = new Uri("https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=" + "zh_cn" + "&textType=plain");
-				HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "");
-				request.Content = new StringContent("[{\"Text\":\"" + Message + "\"}]", Encoding.UTF8, "application/json");
-				request.Headers.UserAgent.ParseAdd("RoundSmartTerminals/ver1 (https://round-studio.github.io)");
-				request.Headers.Add("Authorization", "Bearer " + Translation.Token);
-				request.Headers.Add("Accept", "*/*");
-				request.Headers.Add("Cache-Control", "no-cache");
-				request.Headers.Add("Host", "api.cognitive.microsofttranslator.com");
-				request.Headers.Add("Connection", "keep-alive");
-				HttpResponseMessage response = client.SendAsync(request).Result;
-				response.EnsureSuccessStatusCode();
-				string responseBody = response.Content.ReadAsStringAsync().Result;
-				result = Translation.GetTextForJson(responseBody);
+                HttpClient client = new HttpClient();
+                client.Timeout = TimeSpan.FromMilliseconds(-1.0);
+                client.BaseAddress = new Uri("https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=" + "zh-cn" + "&textType=plain");
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "");
+                request.Content = new StringContent("[{\"Text\":\"" + Message + "\"}]", Encoding.UTF8, "application/json");
+                request.Headers.UserAgent.ParseAdd("RoundSmartTerminals/ver2 (https://round-studio.github.io)");
+                request.Headers.Add("Authorization", "Bearer " + Translation.Token);
+                request.Headers.Add("Accept", "*/*");
+                request.Headers.Add("Cache-Control", "no-cache");
+                request.Headers.Add("Host", "api.cognitive.microsofttranslator.com");
+                request.Headers.Add("Connection", "keep-alive");
+                HttpResponseMessage response = client.SendAsync(request).Result;
+                response.EnsureSuccessStatusCode();
+                string responseBody = response.Content.ReadAsStringAsync().Result;
+                result = Translation.GetTextForJson(responseBody);
 			}
 			catch
 			{
 				result = null;
 			}
-			return result;
+            return result;
 		}
-		public static string Token;
-		private static Thread FlushedTokenThread;
 	}
 }
