@@ -5,10 +5,11 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using Newtonsoft.Json.Linq;
+using Round.NET.SmartTerminals.Models.Core.Config;
 
 namespace Round.NET.SmartTerminals.Models.Translation
 {
-	internal class Translation
+	public class Translation
     {
         public static string Token;
         private static Thread FlushedTokenThread;
@@ -100,7 +101,7 @@ namespace Round.NET.SmartTerminals.Models.Translation
 			{
                 HttpClient client = new HttpClient();
                 client.Timeout = TimeSpan.FromMilliseconds(-1.0);
-                client.BaseAddress = new Uri("https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=" + "zh-cn" + "&textType=plain");
+                client.BaseAddress = new Uri("https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=" + ConfigCore.MainConfig.Language + "&textType=plain");
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "");
                 request.Content = new StringContent("[{\"Text\":\"" + Message + "\"}]", Encoding.UTF8, "application/json");
                 request.Headers.UserAgent.ParseAdd("RoundSmartTerminals/ver2 (https://round-studio.github.io)");

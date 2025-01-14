@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Round.NET.SmartTerminals.Models
 {
-    internal class Timer
+    public class Timer
     {
         public static string GetNewTime()
         {

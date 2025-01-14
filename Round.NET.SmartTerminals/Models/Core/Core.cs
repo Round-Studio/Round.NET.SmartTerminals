@@ -14,8 +14,12 @@ namespace Round.NET.SmartTerminals.Models.Core
         public static bool IsRunning { get; set; } = true; //整个程序运行状态
         public static void InitializerTerminals()   //初始化终端
         {
+            Plugs.PlugCore.LoadingPlug();
+            Config.ConfigCore.LoadConfig();
             Translation.Translation.InitTranslationCore();
+            Language.LanguageSystem.InitializerLanguage();
             BuiltCommand.InitializerBuiltCode();
+
             ColorPrint.Println("Smart Terminals", ConsoleColor.Yellow);
             ColorPrint.Println("[版权所有 (c) Round Studio 保留所有权利]\n", ConsoleColor.Red);
             ColorPrint.Println("开源仓库 https://github.com/Round-Studio/Round.NET.SmartTerminals.", ConsoleColor.Green);

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Round.NET.SmartTerminals.Models.Core.Terminals.Output
 {
-    internal class ColorPrint
+    public class ColorPrint
     {
         public static void Println(object Message, ConsoleColor FontColor = ConsoleColor.White, ConsoleColor BackgroundColor = ConsoleColor.Black)
         {

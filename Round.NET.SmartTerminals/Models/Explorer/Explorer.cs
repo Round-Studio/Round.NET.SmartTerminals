@@ -1,4 +1,5 @@
-﻿using Round.NET.SmartTerminals.Models.Core.Terminals.Output;
+﻿using Round.NET.SmartTerminals.Models.Core.Config;
+using Round.NET.SmartTerminals.Models.Core.Terminals.Output;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -131,7 +132,7 @@ namespace Round.NET.SmartTerminals.Models.Explorer
             {
                 ProcessStartInfo startInfo = new ProcessStartInfo
                 {
-                    FileName = "cmd.exe",
+                    FileName = ConfigCore.MainConfig.RunEngine,
                     Arguments = $"/c {Path}",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,

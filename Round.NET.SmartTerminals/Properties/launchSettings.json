@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "Round.NET.SmartTerminals": {
+      "commandName": "Project"
+    },
+    "WSL": {
+      "commandName": "WSL2",
+      "distributionName": ""
+    }
+  }
+}

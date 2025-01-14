@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "EnvironmentPackageManager": {
+      "commandName": "Project"
+    },
+    "配置文件 1": {
+      "commandName": "Executable",
+      "executablePath": "D:\\Round.Project\\Round.NET.SmartTerminals.Console\\Round.NET.SmartTerminals\\bin\\Debug\\net6.0\\Round.NET.SmartTerminals.exe"
+    }
+  }
+}

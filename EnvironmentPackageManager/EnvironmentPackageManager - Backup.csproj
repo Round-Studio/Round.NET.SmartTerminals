@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Configurations>Debug;Release;Plugs</Configurations>
+    <BaseOutputPath></BaseOutputPath>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="Round.NET.SmartTerminals">
+      <HintPath>..\Round.NET.SmartTerminals\bin\Debug\net6.0\Round.NET.SmartTerminals.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy &quot;D:\工具\奇妙文件夹\Round.NET.SmartTerminals.Console\EnvironmentPackageManager\bin\Debug\net6.0\EnvironmentPackageManager.dll&quot; &quot;D:\工具\奇妙文件夹\Round.NET.SmartTerminals.Console\EnvironmentPackageManager\bin\Debug\net6.0\Plugs\EnvironmentPackageManager.dll&quot;&#xD;&#xA;" />
+  </Target>
+
+</Project>

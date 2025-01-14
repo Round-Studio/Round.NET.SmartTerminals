@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
+using Round.NET.SmartTerminals.Models.Core.Plugs;
 using Round.NET.SmartTerminals.Models.Core.Terminals.Output;
+using Round.NET.SmartTerminals.Models.Core.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Round.NET.SmartTerminals.Models.Core.Terminals.Command
 {
-    internal class BuiltCommand
+    public class BuiltCommand
     {
         public class BuiltCodeStatementConfig
         {
@@ -22,11 +24,12 @@ namespace Round.NET.SmartTerminals.Models.Core.Terminals.Command
         }
         public static void InitializerBuiltCode()
         {
-            BuiltCodeStatement(";help", CodeRun.Help, "关于此程序");
+            BuiltCodeStatement(";help", CodeRun.Help, "帮助");
             BuiltCodeStatement(";about", CodeRun.About, "关于此程序");
             BuiltCodeStatement(";setting", Setting.SettingCore.SettingMenuCore, "设置");
             BuiltCodeStatement(";json", CodeRun.Json, "[Json内容] 自动美化Json");
-            BuiltCodeStatement(";term", CodeRun.Terminals, "[文本] 翻译文本=>中文");
+            BuiltCodeStatement(";term", CodeRun.Terminals, "[文本] 翻译文本=>中文"); ;
+            BuiltCodeStatement(";plugs", CodeRun.Plugs, "查看已安装插件列表");
         }
         public static bool KeywordProcessing(string Code)
         {
@@ -109,21 +112,46 @@ namespace Round.NET.SmartTerminals.Models.Core.Terminals.Command
             }
             public static void Help(string Code)
             {
-                foreach(var it in BuiltCodeList)
+                var maxnum = 0;
+                foreach (var it in BuiltCodeList)
                 {
-                    ColorPrint.Print(it.Code, ConsoleColor.Green);
-                    ColorPrint.Println($" {it.DescriptiveText}", ConsoleColor.Magenta);
+                    if (it.Code.Length > maxnum)
+                    {
+                        maxnum = it.Code.Length;
+                    }
+                }
+                foreach (var it in BuiltCodeList)
+                {
+                    var len = maxnum - Tools.Tools.GetPlaceholderLength(it.Code);
+                    ColorPrint.Println($"{it.Code}{new string(' ', len)} : {it.DescriptiveText}");
                 }
             }
-            public static void Terminals(string Code) {
+            public static void Terminals(string Code)
+            {
                 var text = Translation.Translation.MsTranslationCore(Code);
-                if(text == null)
+                if (text == null)
                 {
                     ColorPrint.Println("暂时无法翻译，请检查网络！", ConsoleColor.Red);
                 }
                 else
                 {
                     ColorPrint.Println(text, ConsoleColor.Green);
+                }
+            }
+            public static void Plugs(string Code)
+            {
+                var maxnum = 0;
+                foreach(var it in PlugCore.PlugsList)
+                {
+                    if(it.NameSpace.Length > maxnum)
+                    {
+                        maxnum = it.NameSpace.Length;
+                    }
+                }
+                foreach(var it in PlugCore.PlugsList)
+                {
+                    var len = maxnum - Tools.Tools.GetPlaceholderLength(it.NameSpace);
+                    ColorPrint.Println($"{new string(' ',len)}{it.NameSpace} : {it.Text}");
                 }
             }
         }

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Round.NET.SmartTerminals\Round.NET.SmartTerminals.csproj" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy &quot;D:\Round.Project\Round.NET.SmartTerminals.Console\Tools\bin\Debug\net6.0\Tools.dll&quot; &quot;D:\Round.Project\Round.NET.SmartTerminals.Console\Tools\bin\Debug\net6.0\Plugs\Tools.dll&quot;" />
+  </Target>
+
+</Project>

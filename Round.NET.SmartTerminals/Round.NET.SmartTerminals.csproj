@@ -11,6 +11,7 @@
     <Copyright>Round Studio</Copyright>
     <PackageIcon>Square44x44Logo.targetsize-256_altform-unplated1.png</PackageIcon>
     <Title>RST</Title>
+    <Configurations>Debug;Release;Plugs</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
